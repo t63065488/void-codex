@@ -1,0 +1,1 @@
+# Void Codex Client Changelog
