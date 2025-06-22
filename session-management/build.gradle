@@ -1,0 +1,55 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.0'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.diffplug.spotless' version '8.1.0'
+	id 'pmd'
+}
+
+group = 'com.voidcodex'
+version = '0.0.1-SNAPSHOT'
+description = 'Websocket project to provide live updates to sessions,'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation("org.projectlombok:lombok:1.18.42")
+	testImplementation 'org.springframework.boot:spring-boot-starter-websocket-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+spotless {
+	ratchetFrom 'origin/main'
+
+	format 'misc', {
+		target '*.gradle', '.gitattributes', '.gitignore'
+		trimTrailingWhitespace()
+		leadingSpacesToTabs()
+		endWithNewline()
+	}
+	java {
+		googleJavaFormat('1.32.0').aosp().reflowLongStrings()
+		formatAnnotations()
+		licenseHeader '/* (C)$YEAR */'
+	}
+}
+
+pmd {
+	consoleOutput = true
+	toolVersion = "7.16.0"
+	rulesMinimumPriority = 5
+	ruleSets = ["category/java/errorprone.xml", "category/java/bestpractices.xml"]
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
