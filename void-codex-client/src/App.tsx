@@ -1,6 +1,7 @@
 import { Application, extend, useApplication, useTick } from "@pixi/react";
 import { Assets, Container, Sprite, Texture } from "pixi.js";
 import { useEffect, useRef, useState } from "react";
+import Grid from "./components/Grid";
 
 // extend tells @pixi/react what Pixi.js components are available
 extend({
@@ -48,8 +49,11 @@ export default function App() {
   return (
     // We'll wrap our components with an <Application> component to provide
     // the Pixi.js Application context
-    <Application background={"#1099bb"} resizeTo={window}>
+    <Application resizeTo={window} autoStart sharedTicker>
       <BunnySprite />
+      <pixiContainer>
+        <Grid x={10} y={10} />
+      </pixiContainer>
     </Application>
   );
 }
