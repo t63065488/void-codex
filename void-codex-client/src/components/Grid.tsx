@@ -1,37 +1,50 @@
-import { useExtend } from "@pixi/react";
-import { Graphics } from "pixi.js";
+import { useApplication, useExtend } from "@pixi/react";
+import { Container, Graphics, Text, TextStyle } from "pixi.js";
+import Cell from "./Cell";
+import { JSX } from "react";
 
 type GridProps = {
   x: number;
   y: number;
+  width?: number;
+  height?: number;
 };
 
-const Grid = ({ x, y }: GridProps) => {
-  const drawGrid = (graphics: Graphics) => {
-    // Draw vertical lines
-    for (let i = 0; i < y; ++i) {
-      drawLine(graphics, i * y, 0, i * y, 100, 0xffffff);
+const Grid = ({ x, y, width, height }: GridProps) => {
+  const { app } = useApplication();
+  // Use provided dimensions or fall back to screen size
+  const containerWidth = width ?? app.screen.width;
+  const containerHeight = height ?? app.screen.height;
+
+  const cellWidth = containerWidth / x;
+  const cellHeight = containerHeight / y;
+
+  const cells: JSX.Element[] = [];
+
+  // Draw cells with numbers
+  for (let row = 0; row < y; row++) {
+    for (let col = 0; col < x; col++) {
+      const cellX = col * cellWidth;
+      const cellY = row * cellHeight;
+      const cellNumber = row * x + col + 1;
+
+      cells.push(
+        <Cell
+          posX={cellX}
+          posY={cellY}
+          key={cellNumber}
+          cellId={cellNumber}
+          showCellId={false}
+          height={cellHeight}
+          width={cellWidth}
+        />,
+      );
     }
-    // Draw vertical lines
-    for (let i = 0; i < x; ++i) {
-      drawLine(graphics, 0, i * x, 100, i * x, 0xffffff);
-    }
-  };
+  }
 
-  const drawLine = (
-    graphics: Graphics,
-    xStart: number,
-    yStart: number,
-    xEnd: number,
-    yEnd: number,
-    color: number,
-  ) => {
-    graphics.moveTo(xStart, yStart).lineTo(xEnd, yEnd).stroke({ color: color });
-  };
+  useExtend({ Container });
 
-  useExtend({ Graphics });
-
-  return <pixiGraphics draw={drawGrid} scale={5} />;
+  return <pixiContainer>{cells}</pixiContainer>;
 };
 
 export default Grid;
